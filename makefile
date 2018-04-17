@@ -1,6 +1,6 @@
 MONGODB_URI="mongodb://localhost:27017"
 
-.PHONY: help clean-container dev
+.PHONY: help clean-container infra dev test
 
 help:
 	@echo
@@ -15,7 +15,13 @@ help:
 clean-container: ## remove all docker containers
 	bash -c "docker rm -f $$(docker ps -aq)" || echo "no container"
 
-dev: clean-container ## compile and start the app
-	bash -c "docker run -d --name mongodb -p 27017:27017 mongo" && \
+infra: clean-container ## set up infra containers
+	bash -c "docker run -d --name mongodb -p 27017:27017 mongo"
+
+
+dev: infra ## compile and start the app
 	./node_modules/.bin/tsc && \
 	MONGODB_URI=${MONGODB_URI} node ./dist/index.js
+
+test: ## unit testing
+	npm run test

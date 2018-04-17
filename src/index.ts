@@ -7,22 +7,10 @@ Server.set('port', port);
 
 const server = http.createServer(Server);
 
-const boot = () => {
-    server.listen(Server.get('port'));
-};
 
-const shutdown = () => {
-    server.close();
-};
+server.listen(Server.get('port'));
+
 
 server.on('listening', () => {
     console.log(`server is listening on port ${Server.get('port')}`);
 });
-
-if (require.main === module) {
-    boot();
-} else {
-    exports.boot = boot;
-    exports.shutdown = shutdown;
-    exports.port = Server.get('port');
-}

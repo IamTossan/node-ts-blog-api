@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 
-import PostModel from '../models/post';
+import PostModel from '../../models/post';
 
 class PostRouter {
-    
+
     public router: Router;
 
     constructor() {

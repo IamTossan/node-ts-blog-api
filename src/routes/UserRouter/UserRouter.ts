@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 
-import { verifyToken } from '../services/token';
-import UserModel from '../models/user';
+import { authMiddleware } from '../../services/auth/auth';
+import UserModel from '../../models/user';
+import { Document } from 'mongoose';
 
-class UserRouter {
+export class UserRouter {
 
     router: Router;
 
@@ -13,10 +14,30 @@ class UserRouter {
         this.routes();
     }
 
-    getUsers(req, res: Response) {
-        UserModel.find({})
+    getUsers() {
+        return new Promise((resolve, reject) => {
+            UserModel.find({})
+                .then((data: Document[]) => {
+                    const users = data.map((item: any) => {
+                        return {
+                            id: item.id,
+                            email: item.email,
+                            username: item.username,
+                            name: item.name,
+                        };
+                    });
+                    resolve(users);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
+
+    getUsersHandler(req: Request, res: Response) {
+        this.getUsers()
             .then((data) => {
-                res.status(200).json({ data });
+                res.json({ data });
             })
             .catch((err) => {
                 res.status(500).json({ err });
@@ -78,11 +99,11 @@ class UserRouter {
     }
 
     routes() {
-        this.router.get('/', verifyToken, this.getUsers);
-        this.router.get('/:username', verifyToken, this.getUser);
+        this.router.get('/', authMiddleware, this.getUsersHandler.bind(this));
+        this.router.get('/:username', authMiddleware, this.getUser);
         this.router.post('/', this.createUser);
-        this.router.put('/:username', verifyToken, this.updateUser);
-        this.router.delete('/:username', verifyToken, this.deleteUser);
+        this.router.put('/:username', authMiddleware, this.updateUser);
+        this.router.delete('/:username', authMiddleware, this.deleteUser);
     }
 }
 

@@ -2,12 +2,13 @@ import * as express from 'express';
 import * as mongoose from 'mongoose';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
+import * as cors from 'cors';
 
-import { verifyToken } from './services/token';
+import { authMiddleware } from './services/auth/auth';
 
-import AuthRouter from './routes/AuthRouter';
-import PostRouter from './routes/PostRouter';
-import UserRouter from './routes/UserRouter';
+import AuthRouter from './routes/AuthRouter/AuthRouter';
+import PostRouter from './routes/PostRouter/PostRouter';
+import UserRouter from './routes/UserRouter/UserRouter';
 
 class Server {
 
@@ -33,13 +34,14 @@ class Server {
 
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
+        this.app.use(cors());
         this.app.use(morgan('dev'));
     }
 
     routes() {
         this.app.use('/api/auth', AuthRouter);
         this.app.use('/api/user', UserRouter);
-        this.app.use('/api/post', verifyToken, PostRouter);
+        this.app.use('/api/post', authMiddleware, PostRouter);
     }
 }
 
