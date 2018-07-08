@@ -4,7 +4,6 @@ import * as chaiAsPromised from 'chai-as-promised';
 
 chai.should();
 chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 import { verifyToken } from './auth';
 

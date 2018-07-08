@@ -23,5 +23,5 @@ dev: infra ## compile and start the app
 	./node_modules/.bin/tsc && \
 	MONGODB_URI=${MONGODB_URI} node ./dist/index.js
 
-test: ## unit testing
-	npm run test
+test: infra ## unit testing
+	MONGODB_URI=${MONGODB_URI} npm run test
