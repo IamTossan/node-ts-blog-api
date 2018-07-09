@@ -14,7 +14,7 @@ import { AuthRouter } from './AuthRouter';
 const instance = new AuthRouter();
 
 before((done) => {
-    mongoose.connect('mongodb://localhost:27017').then(() => {
+    mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }).then(() => {
         bcrypt.hash('123', 10, (err, hash) => {
             if (err) {
                 throw err;

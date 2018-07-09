@@ -23,7 +23,7 @@ class Server {
     }
 
     config() {
-        mongoose.connect(process.env.MONGODB_URI)
+        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
             .then(() => {
                 console.log('server is connected to mongodb');
             })
