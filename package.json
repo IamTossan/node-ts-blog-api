@@ -10,8 +10,8 @@
   "scripts": {
     "ts": "./node_modules/.bin/tsc -w",
     "start": "./node_modules/.bin/tsc && node ./dist/index.js",
-    "test": "./node_modules/.bin/mocha -r ts-node/register src/**/*.spec.ts --exit",
-    "nyan": "./node_modules/.bin/mocha -r ts-node/register src/**/*.spec.ts --watch --watch-extensions ts --reporter nyan --timeout 120000"
+    "test": "./node_modules/.bin/mocha -r ts-node/register $(find . -name '*.spec.ts') --exit",
+    "nyan": "./node_modules/.bin/mocha -r ts-node/register $(find . -name '*.spec.ts') --watch --watch-extensions ts --reporter nyan --timeout 120000"
   },
   "keywords": [],
   "author": "",

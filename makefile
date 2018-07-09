@@ -25,3 +25,6 @@ dev: infra ## compile and start the app
 
 test: infra ## unit testing
 	MONGODB_URI=${MONGODB_URI} npm run test
+
+test-watch: infra ## unit testing w/watch
+	MONGODB_URI=${MONGODB_URI} npm run nyan

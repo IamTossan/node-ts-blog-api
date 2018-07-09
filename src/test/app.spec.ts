@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 
-import * as server from './index';
+import * as server from '../index';
 
 describe('application', () => {
 
