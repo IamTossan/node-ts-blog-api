@@ -1,74 +1,35 @@
-import * as httpMocks from 'node-mocks-http';
 import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-
-import * as mongoose from 'mongoose';
-
-chai.should();
-chai.use(chaiAsPromised);
-
-import * as bcrypt from 'bcrypt';
-import UserModel from '../../models/user';
-import { AuthRouter } from './AuthRouter';
-
-const instance = new AuthRouter();
-
-before((done) => {
-    mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }).then(() => {
-        bcrypt.hash('123', 10, (err, hash) => {
-            if (err) {
-                throw err;
-            }
-            const user = new UserModel({
-                username: 'test',
-                email: 'test@test.co',
-                name: 'test',
-                password: hash,
-            });
-
-            user.save()
-                .then((data) => {
-                    done();
-                })
-                .catch((err) => {
-                    throw err;
-                });
-        });
-    });
-});
-
-after((done) => {
-    mongoose.connection.close(() => {
-        // @ts-ignore
-        mongoose.models = {};
-        // @ts-ignore
-        mongoose.modelSchemas = {};
-        done();
-    });
-});
+import * as superagent from 'superagent';
 
 describe('AuthRouter', () => {
-    it('should return a token', () => {
-        const req = httpMocks.createRequest();
-        const res = httpMocks.createResponse();
-
-        req.body = {
+    it('should return a token', (done) => {
+        const payload = {
             email: 'test@test.co',
             password: '123',
         };
 
-        return instance.login(req, res).should.be.fulfilled;
+        superagent.post('localhost:3000/api/auth/login')
+            .send(payload)
+            .then((res) => {
+                chai.assert(res.status === 200);
+                chai.assert(res.body.token);
+                done()
+            });
     });
 
-    it('should return an unauthorized error', () => {
-        const req = httpMocks.createRequest();
-        const res = httpMocks.createResponse();
-
-        req.body = {
+    it('should return an unauthorized status code', (done) => {
+        const payload = {
             email: 'test@test.co',
             password: '1234',
         };
 
-        return instance.login(req, res).should.be.rejected.and.become({ statusCode: 400 });
+        superagent.post('localhost:3000/api/auth/login')
+            .send(payload)
+            .on('error', (res) => {
+                chai.assert(res.status === 400);
+            })
+            .catch((err) => {
+                done();
+            });
     });
 });

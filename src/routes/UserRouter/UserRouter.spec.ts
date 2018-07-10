@@ -1,22 +1,9 @@
 import * as chai from 'chai';
 import * as superagent from 'superagent';
 
-import * as server from '../../index';
 import UserModel from '../../models/user';
 
 describe('UserRouter', () => {
-
-    beforeEach((done) => {
-        server.boot(() => {
-            done();
-        });
-    });
-
-    afterEach((done) => {
-        server.shutdown(() => {
-            done();
-        });
-    });
 
     it('should create a new user', (done) => {
         const testUser = {
